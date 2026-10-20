@@ -1,0 +1,81 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Google's official test IDs (used for all debug builds)
+def TEST_APP_ID = 'ca-app-pub-3940256099942544~3347511713'
+def TEST_BANNER = 'ca-app-pub-3940256099942544/9214589741'
+def TEST_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712'
+def TEST_REWARDED = 'ca-app-pub-3940256099942544/5224354917'
+
+def prop = { String key, String fallback -> (project.findProperty(key) ?: fallback).toString().trim() }
+
+// Version code goes up automatically with every GitHub Actions run.
+def ciRun = System.getenv('GITHUB_RUN_NUMBER')
+def autoVersionCode = ciRun ? Integer.parseInt(ciRun) : 1
+
+// Release signing: provided by GitHub secrets (see README). Falls back to the debug key.
+def ksPath = System.getenv('KEYSTORE_PATH')
+def hasReleaseKey = ksPath != null && !ksPath.isEmpty() && file(ksPath).exists()
+
+android {
+    namespace 'com.sugarpop.match3'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId prop('APPLICATION_ID', 'com.yourstudio.sugarpop')
+        minSdk 23
+        targetSdk 36
+        versionCode autoVersionCode
+        versionName prop('VERSION_NAME', '1.0')
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseKey) {
+                storeFile file(ksPath)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            manifestPlaceholders = [admobAppId: TEST_APP_ID]
+            buildConfigField 'String', 'AD_BANNER_ID', "\"${TEST_BANNER}\""
+            buildConfigField 'String', 'AD_INTERSTITIAL_ID', "\"${TEST_INTERSTITIAL}\""
+            buildConfigField 'String', 'AD_REWARDED_ID', "\"${TEST_REWARDED}\""
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [admobAppId: prop('ADMOB_APP_ID', TEST_APP_ID)]
+            buildConfigField 'String', 'AD_BANNER_ID', "\"${prop('ADMOB_BANNER_ID', TEST_BANNER)}\""
+            buildConfigField 'String', 'AD_INTERSTITIAL_ID', "\"${prop('ADMOB_INTERSTITIAL_ID', TEST_INTERSTITIAL)}\""
+            buildConfigField 'String', 'AD_REWARDED_ID', "\"${prop('ADMOB_REWARDED_ID', TEST_REWARDED)}\""
+            signingConfig hasReleaseKey ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+    implementation 'com.google.android.ump:user-messaging-platform:3.1.0'
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sugar Pop Match</string>
+    <string name="settings">Settings</string>
+    <string name="menu">Menu</string>
+    <string name="lives">Lives</string>
+    <string name="coins">Coins</string>
+    <string name="goal">Goal</string>
+    <string name="hammer">Hammer</string>
+    <string name="free_swap">Free Swap</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_daily">Daily</string>
+    <string name="nav_shop">Shop</string>
+    <string name="tap_to_play">Tap to play!</string>
+</resources>

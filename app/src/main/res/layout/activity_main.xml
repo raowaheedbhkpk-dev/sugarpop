@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFB6D5"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- ================= MAP ================= -->
+        <FrameLayout
+            android:id="@+id/screenMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/mapScroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <com.sugarpop.match3.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </ScrollView>
+
+            <!-- top bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bar_top"
+                android:elevation="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="12dp">
+
+                <FrameLayout
+                    android:id="@+id/livesBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/lifeTimer"
+                        style="@style/BarPill"
+                        android:layout_marginStart="24dp"
+                        android:paddingStart="30dp" />
+
+                    <FrameLayout
+                        android:layout_width="50dp"
+                        android:layout_height="50dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/lives"
+                            android:src="@drawable/ui_heart" />
+
+                        <TextView
+                            android:id="@+id/livesText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:shadowColor="#AA8A0040"
+                            android:shadowDy="2"
+                            android:shadowRadius="3"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="20sp" />
+                    </FrameLayout>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <FrameLayout
+                    android:id="@+id/coinsBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/mapCoins"
+                        style="@style/BarPill"
+                        android:layout_marginStart="22dp"
+                        android:minWidth="80dp"
+                        android:paddingStart="28dp" />
+
+                    <ImageView
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:contentDescription="@string/coins"
+                        android:src="@drawable/ui_coin" />
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/btnSettings"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/settings"
+                    android:src="@drawable/ui_gear" />
+            </LinearLayout>
+
+            <!-- bottom nav -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bar_bottom"
+                android:elevation="6dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/navMap"
+                    style="@style/NavTab"
+                    android:background="@drawable/nav_selected">
+
+                    <ImageView
+                        style="@style/NavIcon"
+                        android:contentDescription="@string/nav_map"
+                        android:src="@drawable/nav_map" />
+
+                    <TextView
+                        style="@style/NavLabel"
+                        android:text="@string/nav_map" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:id="@+id/navDaily"
+                        style="@style/NavTab"
+                        android:layout_width="match_parent">
+
+                        <ImageView
+                            style="@style/NavIcon"
+                            android:contentDescription="@string/nav_daily"
+                            android:src="@drawable/nav_daily" />
+
+                        <TextView
+                            style="@style/NavLabel"
+                            android:text="@string/nav_daily" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/dailyBadge"
+                        style="@style/Badge"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="18dp"
+                        android:text="!" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/navShop"
+                    style="@style/NavTab">
+
+                    <ImageView
+                        style="@style/NavIcon"
+                        android:contentDescription="@string/nav_shop"
+                        android:src="@drawable/nav_shop" />
+
+                    <TextView
+                        style="@style/NavLabel"
+                        android:text="@string/nav_shop" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- ================= GAME ================= -->
+        <FrameLayout
+            android:id="@+id/screenGame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- HUD -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="104dp"
+                    android:background="@drawable/hud_bar"
+                    android:elevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="8dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <com.sugarpop.match3.ScoreBar
+                                android:id="@+id/scoreBar"
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp" />
+
+                            <TextView
+                                android:id="@+id/scoreText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:shadowColor="#88003040"
+                                android:shadowDy="2"
+                                android:shadowRadius="2"
+                                android:textColor="#FFFFFFFF"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="104dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/hud_notch"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/levelTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#CC003A4A"
+                                android:textSize="15sp" />
+
+                            <FrameLayout
+                                android:id="@+id/movesHolder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/goalIcon"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:contentDescription="@string/goal" />
+
+                            <FrameLayout
+                                android:id="@+id/goalHolder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btnPause"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="4dp"
+                        android:contentDescription="@string/menu"
+                        android:src="@drawable/ui_gear" />
+                </FrameLayout>
+
+                <com.sugarpop.match3.BoardView
+                    android:id="@+id/boardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- boosters -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/booster_tray"
+                    android:orientation="horizontal"
+                    android:padding="6dp">
+
+                    <FrameLayout
+                        android:id="@+id/btnHammer"
+                        style="@style/BoosterBox">
+
+                        <ImageView
+                            style="@style/BoosterIcon"
+                            android:contentDescription="@string/hammer"
+                            android:src="@drawable/boost_hammer" />
+
+                        <TextView
+                            android:id="@+id/badgeHammer"
+                            style="@style/Badge"
+                            android:layout_gravity="top|end" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnSwap"
+                        style="@style/BoosterBox">
+
+                        <ImageView
+                            style="@style/BoosterIcon"
+                            android:contentDescription="@string/free_swap"
+                            android:src="@drawable/boost_swap" />
+
+                        <TextView
+                            android:id="@+id/badgeSwap"
+                            style="@style/Badge"
+                            android:layout_gravity="top|end" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnShuffle"
+                        style="@style/BoosterBox">
+
+                        <ImageView
+                            style="@style/BoosterIcon"
+                            android:contentDescription="@string/shuffle"
+                            android:src="@drawable/boost_shuffle" />
+
+                        <TextView
+                            android:id="@+id/badgeShuffle"
+                            style="@style/Badge"
+                            android:layout_gravity="top|end" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- ================= SPLASH ================= -->
+        <FrameLayout
+            android:id="@+id/splash"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_splash"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/splashLogo"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="90dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo" />
+
+            <ImageView
+                android:id="@+id/splashMascot"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="120dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/mascot" />
+
+            <TextView
+                android:id="@+id/splashTap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="60dp"
+                android:shadowColor="#AA6A1B9A"
+                android:shadowDy="3"
+                android:shadowRadius="4"
+                android:text="@string/tap_to_play"
+                android:textColor="#FFFFFFFF"
+                android:textSize="26sp" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/adContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF2A1240" />
+</LinearLayout>
