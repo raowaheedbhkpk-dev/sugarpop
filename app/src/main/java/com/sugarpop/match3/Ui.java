@@ -174,8 +174,8 @@ public final class Ui {
         @Override
         protected void onDraw(Canvas canvas) {
             Paint.FontMetrics fm = fill.getFontMetrics();
-            float cx = getWidth() / 2f;
-            float cy = getHeight() / 2f - (fm.ascent + fm.descent) / 2f;
+            float cx = getPaddingLeft() + (getWidth() - getPaddingLeft() - getPaddingRight()) / 2f;
+            float cy = getPaddingTop() + (getHeight() - getPaddingTop() - getPaddingBottom()) / 2f - (fm.ascent + fm.descent) / 2f;
             fill.setShader(new LinearGradient(0, cy + fm.ascent, 0, cy, topColor, bottomColor, Shader.TileMode.CLAMP));
             canvas.drawText(text, cx, cy, stroke);
             canvas.drawText(text, cx, cy, fill);
@@ -184,14 +184,40 @@ public final class Ui {
 
     /** Glossy pill button with outlined label. */
     public static OutlineText button(Context c, String label, int color, float sizeSp) {
-        OutlineText t = new OutlineText(c, sizeSp, Color.WHITE, darken(color, 0.5f));
+        OutlineText t = new OutlineText(c, sizeSp, Color.WHITE, darken(color, 0.45f));
         t.setText(label);
-        t.setBackground(pill(c, color, 28));
-        t.setPadding(dp(c, 22), dp(c, 8), dp(c, 22), dp(c, 14));
+        t.setBackgroundResource(buttonRes(color));
         t.setClickable(true);
         t.setFocusable(true);
         pressable(t);
         return t;
+    }
+
+    /** 9-patch button art for a color constant. */
+    public static int buttonRes(int color) {
+        if (color == PINK) return R.drawable.btn_pink;
+        if (color == ORANGE) return R.drawable.btn_orange;
+        if (color == BLUE) return R.drawable.btn_blue;
+        if (color == PURPLE) return R.drawable.btn_purple;
+        if (color == TEAL) return R.drawable.btn_teal;
+        return R.drawable.btn_green;
+    }
+
+    public static int panelRes(int color) {
+        if (color == PINK) return R.drawable.panel_pink;
+        if (color == ORANGE) return R.drawable.panel_orange;
+        if (color == BLUE) return R.drawable.panel_blue;
+        if (color == PURPLE) return R.drawable.panel_purple;
+        if (color == TEAL) return R.drawable.panel_teal;
+        return R.drawable.panel_green;
+    }
+
+    public static int ribbonRes(int color) {
+        if (color == TEAL || color == GREEN) return R.drawable.ribbon_pink;
+        if (color == PINK) return R.drawable.ribbon_purple;
+        if (color == ORANGE) return R.drawable.ribbon_pink;
+        if (color == BLUE) return R.drawable.ribbon_orange;
+        return R.drawable.ribbon_teal;
     }
 
     public static final int GREEN = 0xFF2BC24A;

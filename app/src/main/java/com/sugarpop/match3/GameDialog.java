@@ -39,25 +39,30 @@ public final class GameDialog {
         LinearLayout card = new LinearLayout(c);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setGravity(Gravity.CENTER_HORIZONTAL);
-        card.setBackground(Ui.rounded(frameColor, Ui.dp(c, 30), Ui.dp(c, 3), Ui.lighten(frameColor, 0.5f)));
-        card.setPadding(Ui.dp(c, 10), Ui.dp(c, 6), Ui.dp(c, 10), Ui.dp(c, 12));
-        card.setElevation(Ui.dp(c, 12));
+        card.setBackgroundResource(Ui.panelRes(frameColor));
         FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        clp.topMargin = Ui.dp(c, 14);
+        clp.topMargin = Ui.dp(c, 30);
         wrap.addView(card, clp);
 
-        Ui.OutlineText t = new Ui.OutlineText(c, 30, Color.WHITE, Ui.darken(frameColor, 0.45f));
-        t.setText(title);
-        card.addView(t, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // space under the ribbon
+        card.addView(new View(c), new LinearLayout.LayoutParams(1, Ui.dp(c, 30)));
 
         body = new LinearLayout(c);
         body.setOrientation(LinearLayout.VERTICAL);
         body.setGravity(Gravity.CENTER_HORIZONTAL);
-        body.setBackground(Ui.rounded(0xFFF4FFFC, Ui.dp(c, 24), 0, 0));
-        body.setPadding(Ui.dp(c, 16), Ui.dp(c, 14), Ui.dp(c, 16), Ui.dp(c, 18));
+        body.setBackgroundResource(R.drawable.panel_inner);
         LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        blp.topMargin = Ui.dp(c, 4);
         card.addView(body, blp);
+
+        // ribbon title on top of the panel
+        FrameLayout ribbon = new FrameLayout(c);
+        ribbon.setBackgroundResource(Ui.ribbonRes(frameColor));
+        Ui.OutlineText t = new Ui.OutlineText(c, 28, Color.WHITE, 0xFF7A1048);
+        t.setText(title);
+        ribbon.addView(t, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        FrameLayout.LayoutParams rlp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, Ui.dp(c, 66), Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+        ribbon.setMinimumWidth(Ui.dp(c, 220));
+        wrap.addView(ribbon, rlp);
 
         if (closable) {
             ImageView close = new ImageView(c);
@@ -65,7 +70,8 @@ public final class GameDialog {
             close.setContentDescription("Close");
             int s = Ui.dp(c, 48);
             FrameLayout.LayoutParams xlp = new FrameLayout.LayoutParams(s, s, Gravity.TOP | Gravity.END);
-            xlp.rightMargin = -Ui.dp(c, 6);
+            xlp.topMargin = Ui.dp(c, 16);
+            xlp.rightMargin = -Ui.dp(c, 4);
             wrap.addView(close, xlp);
             close.setElevation(Ui.dp(c, 14));
             Ui.pressable(close);
@@ -142,7 +148,7 @@ public final class GameDialog {
         Context c = body.getContext();
         Ui.OutlineText b = Ui.button(c, label, color, 22);
         b.setOnClickListener(l);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(c, 60));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(c, 62));
         lp.topMargin = Ui.dp(c, 10);
         body.addView(b, lp);
         return b;

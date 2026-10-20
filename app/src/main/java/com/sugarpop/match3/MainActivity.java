@@ -5,7 +5,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,10 +55,8 @@ public class MainActivity extends Activity implements BoardView.Listener, MapVie
     // ---- daily rewards: {coins, booster index or -1, booster amount}
     private static final int[][] DAILY = {{20, -1, 0}, {0, HAMMER, 1}, {40, -1, 0}, {0, SWAP, 1}, {60, -1, 0}, {0, SHUFFLE, 1}, {100, HAMMER, 2}};
 
-    private static final int[][] WORLD_BG = {
-            {0xFFFF5E3A, 0xFFFFD23F}, {0xFF2E6BE6, 0xFF4FD1F0}, {0xFFE2457A, 0xFFFFA26B},
-            {0xFF7A3FD1, 0xFFE070C8}, {0xFF1FA67A, 0xFF9BE15D}, {0xFF6B3E26, 0xFFE0A060},
-    };
+    private static final int[] WORLD_BG_RES = {R.drawable.bg_world_0, R.drawable.bg_world_1, R.drawable.bg_world_2,
+            R.drawable.bg_world_3, R.drawable.bg_world_4, R.drawable.bg_world_5};
 
     private SharedPreferences prefs;
     private AdsManager ads;
@@ -432,8 +429,7 @@ public class MainActivity extends Activity implements BoardView.Listener, MapVie
         movedThisAttempt = false;
         extraMovesAdUsed = false;
         lastHudScore = -1;
-        int[] bg = WORLD_BG[((n - 1) / 20) % WORLD_BG.length];
-        screenGame.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, bg));
+        screenGame.setBackgroundResource(WORLD_BG_RES[((n - 1) / 20) % WORLD_BG_RES.length]);
         boardView.setBoard(board);
         screenMap.setVisibility(View.GONE);
         screenGame.setVisibility(View.VISIBLE);

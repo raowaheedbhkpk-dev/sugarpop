@@ -56,17 +56,14 @@ public class BoardView extends View {
     private final float density;
     private final Bitmap[][] sprites = new Bitmap[6][4];
     private Bitmap bombSprite;
+    private final Bitmap tileABmp, tileBBmp, jelly1Bmp, jelly2Bmp;
+    private final Paint boardShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF dst = new RectF();
     private Path boardPath;
 
     private final Paint bmpPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint boardFill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint boardEdge = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint tileA = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint tileB = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint jelly1 = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint jelly2 = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint jellyEdge = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint beamPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint ringPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint partPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -121,13 +118,14 @@ public class BoardView extends View {
             for (int k = 0; k < 3; k++) sprites[i][k + 1] = Ui.bmp(getResources(), SPECIAL_RES[i][k]);
         }
         bombSprite = Ui.bmp(getResources(), R.drawable.candy_bomb);
-        boardFill.setColor(0xB31B2C7A);
+        tileABmp = Ui.bmp(getResources(), R.drawable.tile_a);
+        tileBBmp = Ui.bmp(getResources(), R.drawable.tile_b);
+        jelly1Bmp = Ui.bmp(getResources(), R.drawable.jelly_1);
+        jelly2Bmp = Ui.bmp(getResources(), R.drawable.jelly_2);
+        boardShadow.setColor(0x55200040);
+        boardFill.setColor(0xD9142060);
         boardEdge.setStyle(Paint.Style.STROKE);
         boardEdge.setColor(0xCCFFFFFF);
-        tileA.setColor(0x33A9C8FF);
-        tileB.setColor(0x1A6E8EFF);
-        jellyEdge.setStyle(Paint.Style.STROKE);
-        jellyEdge.setColor(0x99FFFFFF);
         beamPaint.setStyle(Paint.Style.FILL);
         ringPaint.setStyle(Paint.Style.STROKE);
         for (Paint p : new Paint[]{scoreFill, scoreStroke, praiseFill, praiseStroke}) {
@@ -217,10 +215,7 @@ public class BoardView extends View {
         cell = size / Level.COLS;
         left = (w - size) / 2f;
         top = (h - size) / 2f;
-        boardEdge.setStrokeWidth(3 * density);
-        jellyEdge.setStrokeWidth(1.5f * density);
-        jelly1.setShader(new LinearGradient(0, 0, 0, cell, 0xCCFFB3D9, 0xCCFF6FB0, Shader.TileMode.CLAMP));
-        jelly2.setShader(new LinearGradient(0, 0, 0, cell, 0xEEFF6FB0, 0xEED0217A, Shader.TileMode.CLAMP));
+        boardEdge.setStrokeWidth(5 * density);
         scoreFill.setTextSize(cell * 0.5f);
         scoreStroke.setTextSize(cell * 0.5f);
         scoreStroke.setStrokeWidth(cell * 0.08f);
@@ -262,8 +257,12 @@ public class BoardView extends View {
         super.onDraw(canvas);
         if (board == null || cell <= 0) return;
         if (boardPath != null) {
-            canvas.drawPath(boardPath, boardFill);
+            canvas.save();
+            canvas.translate(0, 8 * density);
+            canvas.drawPath(boardPath, boardShadow);
+            canvas.restore();
             canvas.drawPath(boardPath, boardEdge);
+            canvas.drawPath(boardPath, boardFill);
         }
         int[][] col = board.color, spe = board.special, jel = board.jelly;
         if (phase != IDLE && showColor != null) {
@@ -276,15 +275,10 @@ public class BoardView extends View {
             for (int c = 0; c < board.cols; c++) {
                 if (!board.valid[r][c]) continue;
                 float x = left + c * cell, y = top + r * cell;
-                canvas.drawRoundRect(x + in, y + in, x + cell - in, y + cell - in, rc, rc, (r + c) % 2 == 0 ? tileA : tileB);
+                dst.set(x, y, x + cell, y + cell);
+                canvas.drawBitmap((r + c) % 2 == 0 ? tileABmp : tileBBmp, null, dst, bmpPaint);
                 int j = jel[r][c];
-                if (j > 0) {
-                    canvas.save();
-                    canvas.translate(x, y);
-                    canvas.drawRoundRect(in * 1.5f, in * 1.5f, cell - in * 1.5f, cell - in * 1.5f, rc, rc, j >= 2 ? jelly2 : jelly1);
-                    canvas.drawRoundRect(in * 1.5f, in * 1.5f, cell - in * 1.5f, cell - in * 1.5f, rc, rc, jellyEdge);
-                    canvas.restore();
-                }
+                if (j > 0) canvas.drawBitmap(j >= 2 ? jelly2Bmp : jelly1Bmp, null, dst, bmpPaint);
             }
         }
 

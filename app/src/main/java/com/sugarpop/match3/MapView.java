@@ -2,6 +2,9 @@ package com.sugarpop.match3;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.ComposeShader;
+import android.graphics.PorterDuff;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.LinearGradient;
@@ -39,7 +42,11 @@ public class MapView extends View {
 
     private final float density, spacing, pad, nodeW;
     private final Bitmap nodeCur, nodeDone, nodeLocked, starGold, starEmpty, mascot;
-    private final Bitmap tree, house, lamp, bushBmp, cloudBmp;
+    private final Bitmap tree, house, lamp, bushBmp, cloudBmp, flowerPink, flowerBlue, mushroom, rock;
+    private final BitmapShader grassTex, sandTex;
+    private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pathEdge = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pathGloss = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint bmp = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint grass = new Paint();
     private final Paint blob = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -81,6 +88,17 @@ public class MapView extends View {
         lamp = Ui.bmp(getResources(), R.drawable.map_lamp);
         bushBmp = Ui.bmp(getResources(), R.drawable.map_bush);
         cloudBmp = Ui.bmp(getResources(), R.drawable.map_cloud);
+        flowerPink = Ui.bmp(getResources(), R.drawable.map_flower_pink);
+        flowerBlue = Ui.bmp(getResources(), R.drawable.map_flower_blue);
+        mushroom = Ui.bmp(getResources(), R.drawable.map_mushroom);
+        rock = Ui.bmp(getResources(), R.drawable.map_rock);
+        grassTex = new BitmapShader(Ui.bmp(getResources(), R.drawable.tex_grass), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+        sandTex = new BitmapShader(Ui.bmp(getResources(), R.drawable.tex_sand), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+        android.graphics.Matrix tm = new android.graphics.Matrix();
+        tm.setScale(density / 2f, density / 2f);
+        grassTex.setLocalMatrix(tm);
+        sandTex.setLocalMatrix(tm);
+        shadowPaint.setColor(0x40200A30);
 
         blob.setColor(0x22FFFFFF);
         roadEdge.setStyle(Paint.Style.STROKE);
@@ -89,6 +107,7 @@ public class MapView extends View {
         road.setStyle(Paint.Style.STROKE);
         road.setColor(0xFFF8D3A0);
         road.setStrokeCap(Paint.Cap.ROUND);
+        road.setShader(sandTex);
         float pw = 13 * density;
         pathShadow.setStyle(Paint.Style.STROKE);
         pathShadow.setStrokeWidth(pw + 6 * density);
@@ -102,6 +121,14 @@ public class MapView extends View {
         pathStripe.setStrokeWidth(pw);
         pathStripe.setColor(0xFFF77BC0);
         pathStripe.setPathEffect(new DashPathEffect(new float[]{9 * density, 9 * density}, 0));
+        pathEdge.setStyle(Paint.Style.STROKE);
+        pathEdge.setStrokeWidth(pw + 4 * density);
+        pathEdge.setColor(0xFFD24C8E);
+        pathEdge.setStrokeCap(Paint.Cap.ROUND);
+        pathGloss.setStyle(Paint.Style.STROKE);
+        pathGloss.setStrokeWidth(2.5f * density);
+        pathGloss.setColor(0x99FFFFFF);
+        pathGloss.setStrokeCap(Paint.Cap.ROUND);
         for (Paint p : new Paint[]{numFill, numStroke, signText}) {
             p.setTypeface(Ui.font(context));
             p.setTextAlign(Paint.Align.CENTER);
@@ -174,7 +201,8 @@ public class MapView extends View {
             float topY = world == worlds - 1 ? 0 : nodeY((world + 1) * 20) - spacing / 2f;
             if (bottom < vTop || topY > vBot) continue;
             int[] g = GRASS[world % GRASS.length];
-            grass.setShader(new LinearGradient(0, topY, 0, bottom, g[0], g[1], Shader.TileMode.CLAMP));
+            grass.setShader(new ComposeShader(new LinearGradient(0, topY, 0, bottom, g[0], g[1], Shader.TileMode.CLAMP),
+                    grassTex, PorterDuff.Mode.MULTIPLY));
             canvas.drawRect(0, topY, w, bottom, grass);
         }
         // sky at the very top
@@ -221,7 +249,20 @@ public class MapView extends View {
                 float x = side < 0 ? edge - size - hash(lv, 9) * (edge - size) * 0.6f
                         : edge + hash(lv, 9) * (w - edge - size) * 0.6f;
                 if (side < 0) x = Math.max(-size * 0.3f, x); else x = Math.min(w - size * 0.7f, x);
+                canvas.drawOval(x + size * 0.15f, y - size * 0.07f, x + size * 0.85f, y + size * 0.05f, shadowPaint);
                 dst.set(x, y - size, x + size, y);
+                canvas.drawBitmap(b, null, dst, bmp);
+            }
+            // small scenery between the big pieces
+            for (int k = 0; k < 2; k++) {
+                float r = hash(lv, 20 + k);
+                Bitmap b = r < 0.3f ? flowerPink : r < 0.55f ? flowerBlue : r < 0.8f ? mushroom : rock;
+                float size = (b == mushroom ? 44 : b == rock ? 40 : 30) * density;
+                float sy = nodeY(lv) - spacing * (0.1f + 0.4f * hash(lv, 30 + k));
+                float edge = roadX(sy) + (k == 0 ? -1 : 1) * (roadW / 2f + 8 * density);
+                float sx = k == 0 ? edge - size - hash(lv, 40) * (edge - size) : edge + hash(lv, 41) * (w - edge - size);
+                canvas.drawOval(sx + size * 0.2f, sy - size * 0.08f, sx + size * 0.8f, sy + size * 0.06f, shadowPaint);
+                dst.set(sx, sy - size, sx + size, sy);
                 canvas.drawBitmap(b, null, dst, bmp);
             }
         }
@@ -241,8 +282,13 @@ public class MapView extends View {
         canvas.translate(0, 3 * density);
         canvas.drawPath(pp, pathShadow);
         canvas.restore();
+        canvas.drawPath(pp, pathEdge);
         canvas.drawPath(pp, pathBase);
         canvas.drawPath(pp, pathStripe);
+        canvas.save();
+        canvas.translate(-2 * density, -3 * density);
+        canvas.drawPath(pp, pathGloss);
+        canvas.restore();
 
         // ---- world signs
         for (int world = 0; world * 20 < count; world++) {
@@ -270,13 +316,14 @@ public class MapView extends View {
                 canvas.drawCircle(x, y, nw, glow);
             }
             Bitmap nb = current ? nodeCur : open ? nodeDone : nodeLocked;
-            dst.set(x - nw / 2, y - nw / 2, x + nw / 2, y + nw / 2);
+            float big = nw * 1.25f;
+            dst.set(x - big / 2, y - big * 0.48f, x + big / 2, y + big * 0.52f);
             canvas.drawBitmap(nb, null, dst, bmp);
             if (open) {
                 numStroke.setColor(current ? 0xFF9E0F55 : 0xFFC2427F);
                 String s = String.valueOf(lv);
-                canvas.drawText(s, x, y + 9 * density, numStroke);
-                canvas.drawText(s, x, y + 9 * density, numFill);
+                canvas.drawText(s, x, y + 6 * density, numStroke);
+                canvas.drawText(s, x, y + 6 * density, numFill);
             }
             int s = lv < stars.length ? stars[lv] : 0;
             if (open && !current) {

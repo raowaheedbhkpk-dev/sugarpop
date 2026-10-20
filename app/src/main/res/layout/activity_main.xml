@@ -36,7 +36,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bar_top"
-                android:elevation="6dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="10dp"
@@ -114,10 +113,9 @@
             <!-- bottom nav -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="74dp"
+                android:layout_height="82dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/bar_bottom"
-                android:elevation="6dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -195,9 +193,8 @@
                 <!-- HUD -->
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="104dp"
-                    android:background="@drawable/hud_bar"
-                    android:elevation="6dp">
+                    android:layout_height="112dp"
+                    android:background="@drawable/hud_bar">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -232,20 +229,25 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="104dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="6dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="@drawable/hud_notch"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/moves_plate"
                             android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:paddingBottom="6dp">
 
                             <TextView
                                 android:id="@+id/levelTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="#CC003A4A"
-                                android:textSize="15sp" />
+                                android:shadowColor="#AA003A4A"
+                                android:shadowDy="1"
+                                android:shadowRadius="2"
+                                android:textColor="#FFFFFFFF"
+                                android:textSize="12sp" />
 
                             <FrameLayout
                                 android:id="@+id/movesHolder"
